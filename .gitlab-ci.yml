@@ -1,0 +1,15 @@
+image: registry.dmz.croz.net/croz/build-image
+
+variables:
+  IMAGE_NAME: 'registry.dmz.croz.net/croz/simple-react-server'
+
+stages:
+  - containerize
+
+containerize:
+  stage: containerize
+  script:
+    - buildah bud --format=docker -t ${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} .
+    - buildah tag ${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} ${IMAGE_NAME}:latest
+    - buildah push ${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA} docker://${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}
+    - buildah push ${IMAGE_NAME}:latest docker://${IMAGE_NAME}:latest
